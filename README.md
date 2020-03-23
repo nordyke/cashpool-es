@@ -1,16 +1,16 @@
-This tutorial contains a sample illustrating an CQRS design with [Akka Cluster Sharding](https://doc.akka.io/docs/akka/2.6/typed/cluster-sharding.html), [Akka Cluster Singleton](https://doc.akka.io/docs/akka/2.6/typed/cluster-singleton.html), [Akka Persistence](https://doc.akka.io/docs/akka/2.6/typed/persistence.html) and [Akka Persistence Query](https://doc.akka.io/docs/akka/2.6/persistence-query.html).
+This tutorial contains a sample illustrating a Cash Pool CQRS design with [Akka Cluster Sharding](https://doc.akka.io/docs/akka/2.6/typed/cluster-sharding.html), [Akka Cluster Singleton](https://doc.akka.io/docs/akka/2.6/typed/cluster-singleton.html), [Akka Persistence](https://doc.akka.io/docs/akka/2.6/typed/persistence.html) and [Akka Persistence Query](https://doc.akka.io/docs/akka/2.6/persistence-query.html).
 
 ## Overview
 
-This sample application implements a CQRS-ES design that will side-effect in the read model on selected events persisted to Cassandra by the write model. In this sample, the side-effect is logging a line. A more practical example would be to send a message to a Kafka topic or update a relational database.
+This sample application implements a CQRS-ES design that will side-effect in the read model on selected events persisted to Postgresql by the write model. In this sample, the side-effect is logging a line. A more practical example would be to send a message to a Kafka topic or update a relational database.
 
 ## Write model
 
 The write model is a shopping cart.
 
-The implementation is based on a sharded actor: each `ShoppingCart` is an [Akka Cluster Sharding](https://doc.akka.io/docs/akka/2.6/typed/cluster-sharding.html) entity. The entity actor `ShoppingCart` is an [EventSourcedBehavior](https://doc.akka.io/docs/akka/2.6/typed/persistence.html).
+The implementation is based on a sharded actor: each `CashPool` is an [Akka Cluster Sharding](https://doc.akka.io/docs/akka/2.6/typed/cluster-sharding.html) entity. The entity actor `CashPool` is an [EventSourcedBehavior](https://doc.akka.io/docs/akka/2.6/typed/persistence.html).
 
-Events from the shopping carts are tagged and consumed by the read model.
+Events from the cash pools are tagged and consumed by the read model.
 
 ## Read model
 
@@ -20,11 +20,13 @@ The implementation is resilient: it uses an *Akka Cluster Singleton* in combinat
 
 ## Running the sample code
 
-1. Start a Cassandra server by running:
+1. Start a Postgresql server by running:
 
 ```
-sbt "runMain sample.cqrs.Main cassandra"
+docker run --name postgres-docker -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres  
 ```
+
+1. run initDb/schema.sql
 
 2. Start a node that runs the write model:
 
@@ -48,17 +50,26 @@ sbt -Dakka.cluster.roles.0=read-model "runMain sample.cqrs.Main 2554"
 Try it with curl:
 
 ```
-# add item to cart
-curl -X POST -H "Content-Type: application/json" -d '{"cartId":"cart1", "itemId":"socks", "quantity":3}' http://127.0.0.1:8051/shopping/carts
+# adjust the limit
+curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 1000}' http://127.0.0.1:8051/cashpool/adjust-limit
 
-# get cart
-curl http://127.0.0.1:8051/shopping/carts/cart1
+# drawdown the cash pool
+curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 100}' http://127.0.0.1:8051/cashpool/drawdown
 
-# update quantity of item
-curl -X PUT -H "Content-Type: application/json" -d '{"cartId":"cart1", "itemId":"socks", "quantity":5}' http://127.0.0.1:8051/shopping/carts
+# replenish the cash pool
+curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 100}' http://127.0.0.1:8051/cashpool/replenish
 
-# check out cart
-curl -X POST -H "Content-Type: application/json" -d '{}' http://127.0.0.1:8051/shopping/carts/cart1/checkout
+# get cashpool
+curl http://127.0.0.1:8051/cashpool/1
 ```
 
 or same `curl` commands to port 8052.
+
+View the DB Journal:
+
+```
+select encode(message, 'escape') , * from journal;
+
+-- is populated after 100 events
+select * from snapshot;
+```

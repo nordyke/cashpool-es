@@ -1,6 +1,8 @@
 val AkkaVersion = "2.6.4"
-val AkkaPersistenceCassandraVersion = "0.102"
+val AkkaPersistenceJdbcVersion = "3.5.3"
 val AkkaHttpVersion = "10.1.10"
+val SlickVersion = "3.3.2"
+val PostgresVersion = "42.2.7"
 
 lazy val `akka-sample-cqrs-scala` = project
   .in(file("."))
@@ -15,11 +17,14 @@ lazy val `akka-sample-cqrs-scala` = project
         "com.typesafe.akka" %% "akka-persistence-typed" % AkkaVersion,
         "com.typesafe.akka" %% "akka-persistence-query" % AkkaVersion,
         "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion,
-        "com.typesafe.akka" %% "akka-persistence-cassandra" % AkkaPersistenceCassandraVersion,
-        "com.typesafe.akka" %% "akka-persistence-cassandra-launcher" % AkkaPersistenceCassandraVersion,
         "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
         "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
         "com.typesafe.akka" %% "akka-slf4j" % AkkaVersion,
+        "com.github.dnvriend" %% "akka-persistence-jdbc" % AkkaPersistenceJdbcVersion,
+        "org.postgresql" % "postgresql" % PostgresVersion,
+        "com.typesafe.slick" %% "slick" % SlickVersion,
+        "org.slf4j" % "slf4j-nop" % "1.7.26",
+        "com.typesafe.slick" %% "slick-hikaricp" % SlickVersion,
         "ch.qos.logback" % "logback-classic" % "1.2.3",
         "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test,
         "org.scalatest" %% "scalatest" % "3.1.0" % Test,
