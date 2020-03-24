@@ -53,8 +53,8 @@ Try it with curl:
 # adjust the limit
 curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 1000}' http://127.0.0.1:8051/cashpool/adjust-limit
 
-# drawdown the cash pool
-curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 100}' http://127.0.0.1:8051/cashpool/drawdown
+# draw down the cash pool
+curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 100}' http://127.0.0.1:8051/cashpool/draw-down
 
 # replenish the cash pool
 curl -X PUT -H "Content-Type: application/json" -d '{"cashPoolId": 1, "amount": 100}' http://127.0.0.1:8051/cashpool/replenish
