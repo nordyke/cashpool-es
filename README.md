@@ -26,7 +26,7 @@ The implementation is resilient: it uses an *Akka Cluster Singleton* in combinat
 docker run --name postgres-docker -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres  
 ```
 
-1. run initDb/schema.sql
+1. run [initDb/schema.sql](initDb/schema.sql)
 
 2. Start a node that runs the write model:
 
