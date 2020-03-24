@@ -10,7 +10,7 @@ import akka.cluster.typed.ClusterSingletonSettings
 import akka.cluster.typed.SingletonActor
 
 /**
- * General purpose event processor infrastructure. Not specific to the ShoppingCart domain.
+ * General purpose event processor infrastructure.
  */
 object KeepAlive {
   case object Probe

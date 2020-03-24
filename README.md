@@ -6,7 +6,7 @@ This sample application implements a CQRS-ES design that will side-effect in the
 
 ## Write model
 
-The write model is a shopping cart.
+The write model is a cash pool.
 
 The implementation is based on a sharded actor: each `CashPool` is an [Akka Cluster Sharding](https://doc.akka.io/docs/akka/2.6/typed/cluster-sharding.html) entity. The entity actor `CashPool` is an [EventSourcedBehavior](https://doc.akka.io/docs/akka/2.6/typed/persistence.html).
 
